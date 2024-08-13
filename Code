@@ -1,0 +1,56 @@
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+
+# Step 1: Load the dataset from a CSV file
+# Replace 'your_dataset_path.csv' with the actual path to your CSV file
+df = pd.read_csv('your_dataset_path.csv')
+
+# Step 2: Inspect the data
+print(df.head())
+
+# Step 3: Select features for clustering (assuming these columns exist in your dataset)
+X = df[['Annual Income (k$)', 'Spending Score (1-100)']]
+
+# Step 4: Feature Scaling
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Step 5: Determine the optimal number of clusters using the elbow method
+wcss = []  # Within-cluster sum of squares
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters=i, init='k-means++', max_iter=300, n_init=10, random_state=42)
+    kmeans.fit(X_scaled)
+    wcss.append(kmeans.inertia_)
+
+# Plot the elbow graph
+plt.figure(figsize=(10, 6))
+plt.plot(range(1, 11), wcss, marker='o', linestyle='--')
+plt.title('Elbow Method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+plt.show()
+
+# Step 6: Apply K-Means clustering (choose the optimal number of clusters from the elbow graph, e.g., k=5)
+kmeans = KMeans(n_clusters=5, init='k-means++', max_iter=300, n_init=10, random_state=42)
+df['Cluster'] = kmeans.fit_predict(X_scaled)
+
+# Step 7: Visualize the clusters
+plt.figure(figsize=(10, 6))
+plt.scatter(X_scaled[df['Cluster'] == 0, 0], X_scaled[df['Cluster'] == 0, 1], s=100, c='red', label='Cluster 1')
+plt.scatter(X_scaled[df['Cluster'] == 1, 0], X_scaled[df['Cluster'] == 1, 1], s=100, c='blue', label='Cluster 2')
+plt.scatter(X_scaled[df['Cluster'] == 2, 0], X_scaled[df['Cluster'] == 2, 1], s=100, c='green', label='Cluster 3')
+plt.scatter(X_scaled[df['Cluster'] == 3, 0], X_scaled[df['Cluster'] == 3, 1], s=100, c='cyan', label='Cluster 4')
+plt.scatter(X_scaled[df['Cluster'] == 4, 0], X_scaled[df['Cluster'] == 4, 1], s=100, c='magenta', label='Cluster 5')
+
+# Plotting the centroids of the clusters
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=300, c='yellow', label='Centroids')
+plt.title('Clusters of Customers')
+plt.xlabel('Annual Income (k$)')
+plt.ylabel('Spending Score (1-100)')
+plt.legend()
+plt.show()
+
+# Step 8: Display the first few rows of the resulting DataFrame
+print(df.head())
