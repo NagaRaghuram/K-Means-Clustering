@@ -40,7 +40,7 @@ Make sure to update the dataset path in the code to point to your CSV file.
 
 Usage:
 (1)Clone this repository:
-   git clone https://github.com/NagaRaghuram(Your Username)/customer-segmentation.git
+   git clone https://github.com/NagaRaghuram (Your Username)/customer-segmentation.git
    cd customer-segmentation
 (2)Update the dataset path in the code to your CSV file.
 (3)Run the script:python kmeans_clustering.py
